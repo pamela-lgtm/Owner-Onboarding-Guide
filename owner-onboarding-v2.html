@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verandah Properties — Owner Onboarding Workflow V2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #008C82;
+    --teal-deep: #005F58;
+    --teal-mist: #E8F3F2;
+    --gold: #D4AF50;
+    --gold-soft: #F5EBD0;
+    --gold-deep: #7A5E1A;
+    --ink: #1A2E2C;
+    --slate: #4A5D5B;
+    --mist: #8B9A98;
+    --paper: #FAF8F3;
+    --paper-warm: #F3EFE4;
+    --line: #E2DED2;
+    --line-soft: #EFEBE0;
+    --success: #4A7C59;
+    --alert: #B8572B;
+
+    /* Role colors */
+    --role-pamela: #5A3F7A;
+    --role-pamela-bg: #F0E8F5;
+    --role-linda: #005F58;
+    --role-linda-bg: #E8F3F2;
+    --role-megan: #7A5E1A;
+    --role-megan-bg: #F5EBD0;
+    --role-owner: #B8572B;
+    --role-owner-bg: #FBE8DD;
+    --role-vendor: #4A5D5B;
+    --role-vendor-bg: #EFEBE0;
+    --role-harvey: #8C4B2F;
+    --role-harvey-bg: #F5EDE8;
+    --role-abril: #2F4B8C;
+    --role-abril-bg: #E8EDF5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.025;
+    z-index: 1;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 40px; position: relative; z-index: 2; }
+
+  /* ============ HERO ============ */
+  .hero { padding: 72px 0 56px; border-bottom: 1px solid var(--line); position: relative; }
+  .hero::after { content: ''; position: absolute; bottom: -1px; left: 40px; width: 80px; height: 3px; background: var(--gold); }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 18px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--teal); }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(44px, 5.5vw, 76px);
+    line-height: 0.95; font-weight: 600; letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+  h1 em { font-style: italic; color: var(--teal); font-weight: 400; }
+
+  .lede {
+    font-size: 18px; color: var(--slate);
+    max-width: 720px; line-height: 1.55; margin-bottom: 36px;
+  }
+
+  .scope-strip {
+    display: flex; gap: 40px; flex-wrap: wrap;
+    padding-top: 28px; border-top: 1px solid var(--line-soft);
+  }
+  .scope-item { display: flex; flex-direction: column; gap: 4px; }
+  .scope-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--mist);
+  }
+  .scope-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 19px; font-weight: 600;
+  }
+
+  /* ============ ROLE LEGEND ============ */
+  .role-legend {
+    background: white;
+    border: 1px solid var(--line);
+    padding: 24px 28px;
+    margin: 36px 0 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 24px;
+    align-items: center;
+  }
+  .role-legend-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--mist);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    padding-right: 16px;
+    border-right: 1px solid var(--line);
+  }
+  .role-legend-items { display: flex; flex-wrap: wrap; gap: 20px 28px; }
+  .role-legend-item { display: flex; align-items: center; gap: 10px; }
+  .role-dot {
+    width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+  }
+  .role-legend-label {
+    font-size: 13px; font-weight: 500;
+  }
+  .role-legend-label .role-desc {
+    font-weight: 400; color: var(--slate); font-size: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .role-legend { grid-template-columns: 1fr; }
+    .role-legend-title { writing-mode: horizontal-tb; transform: none; border-right: none; border-bottom: 1px solid var(--line); padding: 0 0 12px; }
+  }
+
+  /* ============ CONTROLS ============ */
+  .controls {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(250, 248, 243, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+    padding: 18px 0; margin-top: 36px;
+  }
+  .controls-inner {
+    display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;
+  }
+  .view-toggle {
+    display: flex; background: var(--paper-warm);
+    border-radius: 2px; padding: 4px; border: 1px solid var(--line);
+  }
+  .view-toggle button {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 9px 18px; border: none; background: transparent;
+    color: var(--slate); cursor: pointer; border-radius: 2px;
+    transition: all 0.25s;
+  }
+  .view-toggle button.active { background: var(--ink); color: var(--paper); }
+
+  .progress-block {
+    display: flex; align-items: center; gap: 14px;
+    flex: 1; min-width: 260px; max-width: 440px;
+  }
+  .progress-count {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 600; white-space: nowrap;
+  }
+  .progress-count .slash { color: var(--mist); font-weight: 400; margin: 0 3px; }
+  .progress-bar {
+    flex: 1; height: 3px; background: var(--line);
+    position: relative; overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    background: var(--teal); width: 0;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .progress-fill::after {
+    content: ''; position: absolute; right: 0; top: -2px; bottom: -2px;
+    width: 2px; background: var(--gold);
+  }
+
+  .reset-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    background: transparent; border: 1px solid var(--line);
+    color: var(--mist); padding: 9px 14px; cursor: pointer; transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: var(--alert); color: var(--alert); }
+
+  /* ============ PHASES ============ */
+  .phases { padding: 52px 0 80px; }
+
+  .phase {
+    margin-bottom: 40px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .phase.complete { border-color: var(--teal); }
+
+  .phase-header {
+    display: grid;
+    grid-template-columns: 72px 1fr auto auto;
+    align-items: center; gap: 20px;
+    padding: 26px 32px;
+    cursor: pointer;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line-soft);
+    transition: background 0.2s;
+  }
+  .phase-header:hover { background: var(--paper-warm); }
+
+  .phase-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 50px; font-weight: 600; font-style: italic;
+    color: var(--gold); line-height: 1; opacity: 0.85;
+  }
+  .phase.complete .phase-num { color: var(--teal); }
+
+  .phase-title-block h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px; font-weight: 600; letter-spacing: -0.01em;
+    margin-bottom: 4px;
+  }
+  .phase-subtitle { font-size: 13.5px; color: var(--slate); }
+
+  .phase-meta {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+  }
+  .phase-timing {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--mist);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .phase-progress {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px; color: var(--ink); font-weight: 500;
+  }
+
+  .chevron {
+    width: 30px; height: 30px;
+    border: 1px solid var(--line); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .phase.open .chevron { transform: rotate(180deg); border-color: var(--teal); }
+  .chevron svg { width: 12px; height: 12px; stroke: var(--slate); }
+
+  .phase-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .phase.open .phase-body { max-height: 6000px; }
+
+  .phase-content { padding: 32px 36px; }
+
+  /* ============ PHASE SECTIONS (Internal / Owner) ============ */
+  .phase-section {
+    margin-bottom: 32px;
+  }
+  .phase-section:last-child { margin-bottom: 0; }
+
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    padding-bottom: 12px; margin-bottom: 16px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .section-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .section-internal .section-dot { background: var(--ink); }
+  .section-owner .section-dot { background: var(--teal); }
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink);
+  }
+  .section-owner .section-label { color: var(--teal-deep); }
+  .section-count {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--mist);
+  }
+
+  /* ============ CHECK ITEMS ============ */
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+
+  .check-item {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    gap: 14px;
+    padding: 14px 12px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.15s;
+    align-items: flex-start;
+  }
+  .check-item:hover { background: var(--paper); }
+
+  .checkbox {
+    width: 20px; height: 20px;
+    border: 1.5px solid var(--mist);
+    border-radius: 2px;
+    margin-top: 2px;
+    position: relative;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    background: white;
+  }
+  .check-item.checked .checkbox { background: var(--teal); border-color: var(--teal); }
+  .check-item.checked .checkbox::after {
+    content: '';
+    position: absolute; left: 5px; top: 1px;
+    width: 6px; height: 11px;
+    border: solid white; border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .check-content { min-width: 0; }
+
+  .check-title {
+    font-size: 14.5px; font-weight: 500; line-height: 1.4;
+    transition: color 0.2s;
+  }
+  .check-item.checked .check-title {
+    color: var(--mist); text-decoration: line-through;
+    text-decoration-thickness: 1px; text-decoration-color: var(--teal);
+  }
+  .check-detail {
+    font-size: 13px; color: var(--slate);
+    margin-top: 5px; line-height: 1.55;
+  }
+  .check-item.checked .check-detail { color: var(--mist); }
+
+  .check-tags {
+    display: flex; gap: 6px; margin-top: 9px; flex-wrap: wrap;
+  }
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 2px; font-weight: 500;
+  }
+  .tag-appfolio { background: var(--role-linda-bg); color: var(--role-linda); }
+  .tag-jotform { background: #E8EDF5; color: #2F4B8C; }
+  .tag-rently { background: #F5EDE8; color: #8C4B2F; }
+  .tag-critical { background: var(--role-owner-bg); color: var(--alert); }
+  .tag-time { background: var(--paper-warm); color: var(--slate); }
+  .tag-docs { background: #E2EFE5; color: var(--success); }
+
+  /* ============ ROLE BADGE (right column) ============ */
+  .role-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    font-weight: 500;
+    white-space: nowrap;
+    margin-top: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+  }
+  .role-badge::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+  }
+  .role-pamela { background: var(--role-pamela-bg); color: var(--role-pamela); }
+  .role-pamela::before { background: var(--role-pamela); }
+  .role-linda { background: var(--role-linda-bg); color: var(--role-linda); }
+  .role-linda::before { background: var(--role-linda); }
+  .role-megan { background: var(--role-megan-bg); color: var(--role-megan); }
+  .role-megan::before { background: var(--role-megan); }
+  .role-owner { background: var(--role-owner-bg); color: var(--role-owner); }
+  .role-owner::before { background: var(--role-owner); }
+  .role-vendor { background: var(--role-vendor-bg); color: var(--role-vendor); }
+  .role-vendor::before { background: var(--role-vendor); }
+  .role-harvey { background: var(--role-harvey-bg); color: var(--role-harvey); }
+  .role-harvey::before { background: var(--role-harvey); }
+  .role-abril { background: var(--role-abril-bg); color: var(--role-abril); }
+  .role-abril::before { background: var(--role-abril); }
+
+  /* ============ VIEW MODES ============ */
+  body.view-owner .section-internal { display: none; }
+  body.view-internal .section-owner { display: none; }
+
+  /* ============ MILESTONE MARKER ============ */
+  .milestone {
+    margin: 40px 0;
+    text-align: center;
+    position: relative;
+  }
+  .milestone::before, .milestone::after {
+    content: ''; position: absolute; top: 50%;
+    width: calc(50% - 150px); height: 1px; background: var(--line);
+  }
+  .milestone::before { left: 0; }
+  .milestone::after { right: 0; }
+  .milestone-mark {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold-deep);
+    padding: 10px 22px;
+    background: var(--paper);
+    position: relative;
+    border: 1px solid var(--gold);
+  }
+
+  /* ============ HANDOFF CALLOUT ============ */
+  .handoff-note {
+    background: linear-gradient(135deg, var(--gold-soft) 0%, var(--paper-warm) 100%);
+    border-left: 3px solid var(--gold);
+    padding: 20px 24px;
+    margin: 20px 0 28px;
+    font-size: 14px;
+    color: var(--slate);
+    line-height: 1.6;
+    font-style: italic;
+  }
+  .handoff-note strong { color: var(--ink); font-style: normal; font-weight: 600; }
+
+  /* ============ DECISION BRANCHES ============ */
+  .decision-branches {
+    background: white;
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--teal);
+    padding: 22px 24px;
+    margin: 0 0 28px;
+  }
+  .decision-branches-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal-deep);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .decision-branches-title::before {
+    content: ''; width: 5px; height: 5px; background: var(--teal); border-radius: 50%;
+  }
+  .decision-branches ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px 28px;
+  }
+  .decision-branches li {
+    padding-left: 18px;
+    position: relative;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .decision-branches li::before {
+    content: '?';
+    position: absolute;
+    left: 0; top: 1px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 600;
+    color: var(--gold);
+    font-size: 15px;
+  }
+  .decision-branches li strong {
+    display: block;
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+  .decision-branches li span {
+    color: var(--slate);
+    font-size: 12.5px;
+  }
+
+  /* ============ LINDA CADENCE STATEMENT ============ */
+  .linda-cadence {
+    background: var(--teal-mist);
+    border-left: 3px solid var(--teal);
+    padding: 20px 24px;
+    margin: 24px 0 0;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--teal-deep);
+  }
+  .linda-cadence strong { font-weight: 600; color: var(--ink); }
+  .linda-cadence-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 44px 0 56px; margin-top: 32px;
+  }
+  .footer-inner {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    flex-wrap: wrap; gap: 20px;
+  }
+  .footer-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px; font-style: italic; color: var(--teal);
+  }
+  .footer-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--mist); text-align: right; line-height: 1.8;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 720px) {
+    .wrap { padding: 0 20px; }
+    .hero { padding: 44px 0 36px; }
+    .phase-header {
+      grid-template-columns: 52px 1fr auto;
+      padding: 18px; gap: 14px;
+    }
+    .phase-num { font-size: 36px; }
+    .phase-title-block h2 { font-size: 19px; }
+    .phase-meta { display: none; }
+    .phase-content { padding: 22px 18px; }
+    .check-item {
+      grid-template-columns: 22px 1fr;
+    }
+    .role-badge {
+      grid-column: 2;
+      justify-self: start;
+      margin-top: 8px;
+    }
+    .controls-inner { flex-direction: column; align-items: stretch; }
+    .scope-strip { gap: 20px; }
+  }
+
+  @media print {
+    .controls, footer, .chevron, .reset-btn { display: none; }
+    .phase-body { max-height: none !important; }
+    .phase { page-break-inside: avoid; border: 1px solid #ccc; }
+    body::before { display: none; }
+  }
+</style>
+</head>
+<body class="view-both">
+
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="eyebrow">Verandah Properties · Operational Workflow · V6</div>
+    <h1>Owner<br><em>Onboarding</em></h1>
+    <p class="lede">From soft-yes on the lead through lease signed — the full sequence of what happens inside Verandah and what the owner experiences along the way. Ends at lease execution; ClickUp steady-state workflow picks up from there.</p>
+
+    <div class="scope-strip">
+      <div class="scope-item">
+        <span class="scope-label">Start</span>
+        <span class="scope-val">Soft Yes on Lead</span>
+      </div>
+      <div class="scope-item">
+        <span class="scope-label">End</span>
+        <span class="scope-val">Lease Signed</span>
+      </div>
+      <div class="scope-item">
+        <span class="scope-label">Starting Condition</span>
+        <span class="scope-val">Vacant + Show-Ready</span>
+      </div>
+      <div class="scope-item">
+        <span class="scope-label">Systems</span>
+        <span class="scope-val">AppFolio · Jotform · Rently</span>
+      </div>
+    </div>
+
+    <!-- ROLE LEGEND -->
+    <div class="role-legend">
+      <div class="role-legend-title">Roles</div>
+      <div class="role-legend-items">
+        <div class="role-legend-item">
+          <span class="role-dot" style="background: var(--role-pamela);"></span>
+          <span class="role-legend-label">Pamela <span class="role-desc">· Lead owner, PMA, Pamela→Linda handoff</span></span>
+        </div>
+        <div class="role-legend-item">
+          <span class="role-dot" style="background: var(--role-linda);"></span>
+          <span class="role-legend-label">Linda <span class="role-desc">· White-glove vacancy contact</span></span>
+        </div>
+        <div class="role-legend-item">
+          <span class="role-dot" style="background: var(--role-megan);"></span>
+          <span class="role-legend-label">Megan <span class="role-desc">· Maintenance, pro photography, vendors</span></span>
+        </div>
+        <div class="role-legend-item">
+          <span class="role-dot" style="background: var(--role-harvey);"></span>
+          <span class="role-legend-label">Harvey <span class="role-desc">· Marketing manager — listing copy, data, syndication</span></span>
+        </div>
+        <div class="role-legend-item">
+          <span class="role-dot" style="background: var(--role-abril);"></span>
+          <span class="role-legend-label">Abril <span class="role-desc">· Applications, lease execution, deposits</span></span>
+        </div>
+        <div class="role-legend-item">
+          <span class="role-dot" style="background: var(--role-owner);"></span>
+          <span class="role-legend-label">Owner <span class="role-desc">· Action required</span></span>
+        </div>
+        <div class="role-legend-item">
+          <span class="role-dot" style="background: var(--role-vendor);"></span>
+          <span class="role-legend-label">Vendor <span class="role-desc">· Photographer, Rently, outside trades</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTROLS ============ -->
+  <div class="controls">
+    <div class="controls-inner">
+      <div class="view-toggle" role="tablist">
+        <button class="active" data-view="both">Full Workflow</button>
+        <button data-view="internal">Internal Only</button>
+        <button data-view="owner">Owner-Facing</button>
+      </div>
+      <div class="progress-block">
+        <span class="progress-count"><span id="done">0</span><span class="slash">/</span><span id="total">0</span></span>
+        <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
+      </div>
+      <button class="reset-btn" id="reset">Reset All</button>
+    </div>
+  </div>
+
+  <!-- ============ PHASES ============ -->
+  <section class="phases" id="phases">
+
+    <!-- ================================================== -->
+    <!-- PHASE 1 — PRE-PMA: SOFT YES -->
+    <!-- ================================================== -->
+    <article class="phase open" data-phase="1">
+      <header class="phase-header">
+        <div class="phase-num">01</div>
+        <div class="phase-title-block">
+          <h2>Pre-PMA · The Soft Yes</h2>
+          <div class="phase-subtitle">Light-touch commitment ritual before the agreement is signed — reduces info fatigue later</div>
+        </div>
+        <div class="phase-meta">
+          <span class="phase-timing">Lead Stage</span>
+          <span class="phase-progress" data-count>0 of 0</span>
+        </div>
+        <div class="chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </header>
+      <div class="phase-body">
+        <div class="phase-content">
+
+          <div class="handoff-note">
+            Pamela is in the lead chair. The soft yes is a signal — not a commitment — but sending the Pre-Management Preparation Form here lets the owner <strong>feel</strong> they've moved forward without the weight of a signature. Bite-size. Psychologically smart.
+          </div>
+
+          <div class="decision-branches">
+            <div class="decision-branches-title">Decision Branches · Ask Before Proceeding</div>
+            <ul>
+              <li><strong>New or existing owner?</strong><span>Existing owner skips portal/W-9/setup steps already on file.</span></li>
+              <li><strong>Rent-only or Lease-only?</strong><span>Lease-only pulls the workflow out after Phase 7. No ongoing management.</span></li>
+              <li><strong>Referred by a realtor?</strong><span>If yes, Realtor Referral Form required before proceeding to PMA.</span></li>
+            </ul>
+          </div>
+
+          <div class="phase-section section-internal">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Internal Actions</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p1-i1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Confirm soft yes and set rent-ready expectations</div>
+                  <div class="check-detail">Pamela confirms verbally and in writing: property must be vacant and show-ready before listing. No exceptions. Owner controls the timeline from here.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Standard Set</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p1-i2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Send Pre-Management Preparation Form (Jotform)</div>
+                  <div class="check-detail">First bite-size info capture. Collects early essentials before the owner is overwhelmed with post-PMA paperwork.</div>
+                  <div class="check-tags"><span class="tag tag-jotform">Jotform</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p1-i3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Draft PMA in PandaDoc</div>
+                  <div class="check-detail">Prepared prior to signing appointment. Any custom paragraphs (overnight mail, curtains permitted, custom fees) noted for Pamela's review.</div>
+                  <div class="check-tags"><span class="tag tag-docs">PandaDoc</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p1-i4">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Send Realtor Referral Form (if applicable)</div>
+                  <div class="check-detail">If the lead came from a realtor, send the referral contract via PandaDoc for broker signature. CC realtor. Completed copy filed in owner folder.</div>
+                  <div class="check-tags"><span class="tag tag-docs">PandaDoc</span><span class="tag tag-time">Conditional</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="phase-section section-owner">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Owner Experience</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p1-o1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Receives Pre-Management Preparation Form</div>
+                  <div class="check-detail">Short, digestible form from Pamela. Feels like a low-commitment step. The psychological "yes" starts here.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p1-o2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Understands the rent-ready standard</div>
+                  <div class="check-detail">Clear in writing: property must be vacant and show-ready before Verandah lists. Owner's declaration of rent-ready triggers everything downstream.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p1-o3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Completes Pre-Management form</div>
+                  <div class="check-detail">Returns early property details to Verandah. Small win — builds momentum toward signing.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <div class="milestone"><span class="milestone-mark">Milestone · Management Agreement Signed</span></div>
+
+    <!-- ================================================== -->
+    <!-- PHASE 2 — POST-PMA INTAKE & HANDOFF -->
+    <!-- ================================================== -->
+    <article class="phase" data-phase="2">
+      <header class="phase-header">
+        <div class="phase-num">02</div>
+        <div class="phase-title-block">
+          <h2>Post-PMA · Intake &amp; Linda Handoff</h2>
+          <div class="phase-subtitle">Formal handoff from Pamela to Linda. Owner meets their white-glove contact for the vacancy period.</div>
+        </div>
+        <div class="phase-meta">
+          <span class="phase-timing">Day 0 – Day 3</span>
+          <span class="phase-progress" data-count>0 of 0</span>
+        </div>
+        <div class="chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </header>
+      <div class="phase-body">
+        <div class="phase-content">
+
+          <div class="handoff-note">
+            <strong>Handoff protocol:</strong> Pamela introduces Linda by email, copying the owner. Linda is the owner's direct contact through lease signing — showings, feedback, applications, price conversations. Pamela and Megan build the AppFolio pages; Linda does not.
+          </div>
+
+          <div class="phase-section section-internal">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Internal Actions</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p2-i1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Countersign PMA and file in AppFolio owner documents</div>
+                  <div class="check-detail">Upload executed PMA. Note custom paragraph revisions in property-level notes (overnight mail preference, curtains, fee structure).</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p2-i2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Send New Client Onboarding Form (Jotform)</div>
+                  <div class="check-detail">Second Jotform. Captures everything needed to build the Property Page and Owner Page in AppFolio — taxpayer entity, HOA, utilities, appliances, amenities, lease preferences, marketing details.</div>
+                  <div class="check-tags"><span class="tag tag-jotform">Jotform</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p2-i3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Send formal handoff email introducing Linda</div>
+                  <div class="check-detail">Pamela writes: "Meet Linda, your direct contact until your property is leased." Clear scope of what Linda will and won't do. Linda cc'd.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Handoff</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p2-i4">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Schedule Linda's owner orientation call</div>
+                  <div class="check-detail">20–25 min call. Timing set by Pamela based on the current owner/client situation and urgency. Linda walks through what happens next, introduces the AppFolio Owner Portal, and sets expectations for communication cadence.</div>
+                  <div class="check-tags"><span class="tag tag-time">20–25 min</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p2-i5">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Activate AppFolio Owner Portal and send invite</div>
+                  <div class="check-detail">Trigger portal invite. If invite expires, resend — track activation status (ARC Trust example: 11/8/2024 activation). For co-owners, invite each separately.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+              <li class="check-item" data-id="p2-i6">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Portal orientation during call</div>
+                  <div class="check-detail">Linda walks the owner through login, dashboard, statements, document access, and how to contact Verandah. Offers follow-up help if they get stuck.</div>
+                  <div class="check-tags"><span class="tag tag-time">Live demo</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+              <li class="check-item" data-id="p2-i7">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Send Rently heads-up email to owner (before install)</div>
+                  <div class="check-detail">Pamela sends a short email: "We're installing the Rently box this week so everything's ready when you declare rent-ready." Reassures the owner that <strong>no one can enter the property</strong> until they physically place the key inside the box. Prevents surprise if they drive by or a neighbor mentions it.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Heads-Up</span><span class="tag tag-rently">Rently</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p2-i8">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Order Rently box and install at property</div>
+                  <div class="check-detail">Ordered and installed right after PMA signing — don't wait for rent-ready. Box is live and ready to use whenever the owner declares ready. Activate box and log the Rently serial number on the Property Page.</div>
+                  <div class="check-tags"><span class="tag tag-rently">Rently</span><span class="tag tag-appfolio">Serial to AppFolio</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p2-i9">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Send owner the Rently key-placement instructions</div>
+                  <div class="check-detail">Written steps + short video/screenshots: how to open the box, place the key inside, confirm it's secured. Owner or their friend/family handles physically. Linda is the support contact if they get stuck.</div>
+                  <div class="check-tags"><span class="tag tag-rently">Rently</span><span class="tag tag-critical">Instructions</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+              <li class="check-item" data-id="p2-i10">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Receive written confirmation from owner that key is in lockbox</div>
+                  <div class="check-detail">Owner must confirm in writing (email or portal message) that they've placed the key inside the Rently box. This is a non-negotiable checkpoint — protects the owner legally and confirms to Verandah that access is operational.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Written Confirmation</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+              <li class="check-item" data-id="p2-i11">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Test Rently access and document in AppFolio</div>
+                  <div class="check-detail">After owner's written confirmation, Megan or Linda tests access via the Rently app. Confirmation logged in AppFolio property notes with date. Access now fully operational.</div>
+                  <div class="check-tags"><span class="tag tag-rently">Rently</span><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="phase-section section-owner">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Owner Experience</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p2-o1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Receives Pamela's handoff email introducing Linda</div>
+                  <div class="check-detail">Clear framing: Linda is their contact through lease signing. Pamela remains available for strategic questions.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p2-o2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Completes New Client Onboarding Form</div>
+                  <div class="check-detail">More detailed than the pre-PMA form. Owner provides HOA info, utilities, appliances, amenities, and all the details needed to list and write the lease.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p2-o3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Takes orientation call with Linda</div>
+                  <div class="check-detail">Meets Linda, gets a live portal walkthrough, understands what happens next. Leaves the call knowing exactly who does what.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p2-o4">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Activates AppFolio Owner Portal</div>
+                  <div class="check-detail">Logs in, confirms access. If any friction, Linda helps in real time.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p2-o5">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Receives Rently heads-up email from Pamela</div>
+                  <div class="check-detail">Owner knows the box is being installed and understands no one can enter until they place the key. No surprises if they drive by or a neighbor asks.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p2-o6">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Places key in Rently lockbox</div>
+                  <div class="check-detail">Owner (or friend/family) follows the written + video instructions provided by Linda. Simple, physical step.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p2-o7">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Sends written confirmation that key is in lockbox</div>
+                  <div class="check-detail">Email or portal message to Linda confirming the key is physically in the box. This is the final unlock — Verandah will then test access and access is fully operational.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <!-- ================================================== -->
+    <!-- PHASE 3 — APPFOLIO BUILD-OUT -->
+    <!-- ================================================== -->
+    <article class="phase" data-phase="3">
+      <header class="phase-header">
+        <div class="phase-num">03</div>
+        <div class="phase-title-block">
+          <h2>AppFolio Build-Out</h2>
+          <div class="phase-subtitle">Owner Page and Property Page constructed to Verandah standard — full fidelity, nothing missing</div>
+        </div>
+        <div class="phase-meta">
+          <span class="phase-timing">Day 2 – Day 7</span>
+          <span class="phase-progress" data-count>0 of 0</span>
+        </div>
+        <div class="chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </header>
+      <div class="phase-body">
+        <div class="phase-content">
+
+          <div class="handoff-note">
+            The AppFolio pages are the operational source of truth. ARC Trust (Owner) and Stoddart Ave (Property) show the completeness standard. Linda does <strong>not</strong> set these up — Pamela handles Owner Page, Megan handles Property Page.
+          </div>
+
+          <div class="decision-branches">
+            <div class="decision-branches-title">Decision Branches · Property Specifics</div>
+            <ul>
+              <li><strong>Is there a gate?</strong><span>If yes, capture gate code, access procedure, and any HOA gate-entry rules.</span></li>
+              <li><strong>HOA governing the property?</strong><span>HOA contact info request triggers immediately — admin fees, approval/renewal process, lease-term limits.</span></li>
+              <li><strong>Solar panels or special systems?</strong><span>Flag on Property Page tags for future maintenance routing.</span></li>
+            </ul>
+          </div>
+
+          <div class="phase-section section-internal">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Internal Actions</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p3-i1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Build Owner Page in AppFolio</div>
+                  <div class="check-detail">Full owner record: legal name, entity type, co-trustees if applicable, all contact methods, mailing address. Taxpayer name and 1099 preferences (electronic consent, etc.) — W-9/W-8 collected later at lease signing.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p3-i2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Configure owner accounting preferences</div>
+                  <div class="check-detail">Check consolidation, stub breakdown, owner statement settings (show transactions, unpaid bills, summary), owner packet settings (email delivery, included reports, attachments).</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p3-i3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Build Property Page in AppFolio</div>
+                  <div class="check-detail">Address, type, county, year built, bed/bath, square footage, tax authority, property owner license, management start date, liability insurance settings, FolioGuard additional interest, tags (neighborhood, solar, HOA name).</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p3-i4">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Enter full Property Information block</div>
+                  <div class="check-detail">Critical narrative details: utilities handling (who pays what), HOA contacts and approval/renewal process, pet breed restrictions, lease stipulations (12-month min if HOA requires), appliance notes, irrigation, key/gate info, home warranty, MCC instructions (water heater location, electric panel).</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span><span class="tag tag-critical">Ops Truth</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p3-i5">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Link owner to property at correct %</div>
+                  <div class="check-detail">Ownership percentage, distribution percentage (flexible independent of ownership), contract expiration. For multi-owner entities, confirm legal structure.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p3-i6">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Set management fees and additional fee schedule</div>
+                  <div class="check-detail">Management fee %, when-vacant collected policy, lease fee, renewal fee, marketing fee (typically waived first year), animal guarantee. GL account pass-through percentages (admin, app fee, late fees, pet fees, etc.).</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p3-i7">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Configure late fee policy and reserve</div>
+                  <div class="check-detail">Standard Verandah late fee policy (10% base, 3-day grace, post after 3 days, recurring rent only). Reserve funds per PMA (standard: $200–500).</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p3-i8">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Set maintenance limit and vendor dispatching rules</div>
+                  <div class="check-detail">Property-level maintenance limit (e.g., $350 owner approval threshold). Online maintenance request instructions. Emergency line protocol. Unit entry pre-authorization per owner preference.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p3-i9">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Apply lease templates and attachments</div>
+                  <div class="check-detail">Default new lease, renewal, and month-to-month templates. Standard attachments (Tenant Handbook, AC Filter Program flyer). Any property-specific addenda (pool/spa, pet).</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p3-i10">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Upload PMA, tax roll, and misc docs to property folders</div>
+                  <div class="check-detail">Folder structure: Initial, Maintenance, Marketing, Leases, Taxes. PMA filed in owner docs; tax roll, W-9 (when received), insurance dec filed appropriately.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p3-i11">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Capture gate and access info</div>
+                  <div class="check-detail">If property is gated: gate code, guard-gate procedure, HOA gate rules, any vendor-access protocols. Logged in Property Information notes so every vendor and showing agent has what they need.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span><span class="tag tag-time">Conditional</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p3-i12">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Fill out Key template on Property Page</div>
+                  <div class="check-detail">Key count, garage remotes, mailbox keys, pool/amenity cards, gate remotes. Inventory logged against the property so nothing goes missing between owner handoff and tenant move-in.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p3-i13">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Email HOA for first contact info</div>
+                  <div class="check-detail">Reach out to HOA immediately to establish working contact, confirm approval/renewal process, admin fee amounts, lease-term restrictions, and any tenant packet requirements. Contact info filed in Property Information.</div>
+                  <div class="check-tags"><span class="tag tag-critical">HOA</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p3-i14">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">INFO DUMP — all pertinent property/owner info into AppFolio</div>
+                  <div class="check-detail">Everything learned during intake: owner quirks, communication preferences, maintenance history, quirks of the property, vendor history, special requests. Centralized on the Property Page so the whole team has context on day one.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span><span class="tag tag-critical">Context</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p3-i15">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Audit Owner Page and Property Page for completeness</div>
+                  <div class="check-detail">Final review before marketing. Pamela audits Owner Page, Megan audits Property Page. Cross-check against ARC Trust / Stoddart Ave standard. Flag any gaps and close them before listing.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Quality Gate</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="phase-section section-owner">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Owner Experience</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p3-o1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Provides any follow-up detail Linda requests</div>
+                  <div class="check-detail">If the Jotform left gaps (HOA contact, appliance ages, utility accounts, etc.), Linda circles back for clean data. Owner responds promptly.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p3-o2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Signs off on any custom PMA terms in AppFolio record</div>
+                  <div class="check-detail">If Pamela added custom clauses during PMA (overnight mail, curtains permitted, custom fees), owner confirms these are correctly recorded.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <!-- ================================================== -->
+    <!-- PHASE 4 — RENT-READY, RENTLY, & ACCESS -->
+    <!-- ================================================== -->
+    <article class="phase" data-phase="4">
+      <header class="phase-header">
+        <div class="phase-num">04</div>
+        <div class="phase-title-block">
+          <h2>Rent-Ready Declaration</h2>
+          <div class="phase-subtitle">Owner declares rent-ready — Verandah moves the moment the declaration arrives</div>
+        </div>
+        <div class="phase-meta">
+          <span class="phase-timing">Owner-Controlled</span>
+          <span class="phase-progress" data-count>0 of 0</span>
+        </div>
+        <div class="chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </header>
+      <div class="phase-body">
+        <div class="phase-content">
+
+          <div class="handoff-note">
+            <strong>Owner controls the clock.</strong> Rently access was installed back in Phase 2, so the operational hardware is already in place. This phase is about the owner's written "go" signal — the moment they declare rent-ready, Verandah moves straight into marketing.
+          </div>
+
+          <div class="phase-section section-internal">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Internal Actions</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p4-i1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Receive owner's rent-ready declaration in writing</div>
+                  <div class="check-detail">Email or portal message. Once this arrives, Verandah proceeds. No chasing, no second-guessing — owner has said go.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Go Signal</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+              <li class="check-item" data-id="p4-i2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Offer vendor connection if owner wants help</div>
+                  <div class="check-detail">If owner is running short on time or wants Verandah's vendors, Megan coordinates. Not required — owner's choice. Access via Rently already in place.</div>
+                  <div class="check-tags"><span class="tag tag-time">Optional</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p4-i3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Confirm utilities are on in owner's name</div>
+                  <div class="check-detail">Per the management agreement, owner is responsible for keeping utilities on in their name during vacancy. Linda confirms with the owner that electric, water, lawn service are active. If an unusual circumstance requires Verandah to put utilities in its name temporarily, it must be documented in writing and handled per property specifics (e.g., Stoddart: owner keeps OUC in his name, sends paid bill for reimbursement tracking).</div>
+                  <div class="check-tags"><span class="tag tag-critical">Confirm with Owner</span><span class="tag tag-docs">Per PMA</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="phase-section section-owner">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Owner Experience</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p4-o1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Completes rent-ready prep on their own timeline</div>
+                  <div class="check-detail">Owner decides when the property meets show-ready standard. They can use their own people or request Verandah's vendor help.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p4-o2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Declares rent-ready in writing to Linda</div>
+                  <div class="check-detail">Email or portal message saying "ready to list." This is the formal trigger.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p4-o3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Confirms utility handling arrangement</div>
+                  <div class="check-detail">If utilities require special handling (multi-unit property, HOA-included internet), owner confirms approach with Linda.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <div class="milestone"><span class="milestone-mark">Milestone · Property Rent-Ready · Ready to Market</span></div>
+
+    <!-- ================================================== -->
+    <!-- PHASE 5 — MARKETING PREP & LISTING -->
+    <!-- ================================================== -->
+    <article class="phase" data-phase="5">
+      <header class="phase-header">
+        <div class="phase-num">05</div>
+        <div class="phase-title-block">
+          <h2>Marketing Prep &amp; Listing Launch</h2>
+          <div class="phase-subtitle">Pro photos, comp-based pricing, full marketing copy, syndication across platforms</div>
+        </div>
+        <div class="phase-meta">
+          <span class="phase-timing">7–14 Days</span>
+          <span class="phase-progress" data-count>0 of 0</span>
+        </div>
+        <div class="chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </header>
+      <div class="phase-body">
+        <div class="phase-content">
+
+          <div class="handoff-note">
+            <strong>Pre-signed decisions:</strong> Pricing and Safe Mode vs Open Showings are both handled by Pamela <strong>before</strong> the owner signs with Verandah. By the time we reach marketing, these are settled — Pamela passes the approved rent to Harvey for listing purposes. No re-negotiation needed.
+          </div>
+
+          <div class="decision-branches">
+            <div class="decision-branches-title">Decision Branches · Photography</div>
+            <ul>
+              <li><strong>Are property photos up to Verandah standard?</strong><span>Owner-supplied photos rarely meet the bar. Megan orders pro photography once rent-ready is confirmed and Rently access is operational.</span></li>
+            </ul>
+          </div>
+
+          <div class="phase-section section-internal">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Internal Actions</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p5-i1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Pass approved rent to Harvey for marketing</div>
+                  <div class="check-detail">Pricing was agreed with the owner <em>before</em> PMA signing. Pamela forwards the approved rent, pet policy, and available date to Harvey so listing setup can proceed without delay.</div>
+                  <div class="check-tags"><span class="tag tag-docs">Pricing Pre-Set</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p5-i2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Confirm Safe Mode or Open Showings with Harvey</div>
+                  <div class="check-detail">Pamela confirms the showing-mode decision that was made with the owner pre-signing. Harvey applies this when listing in Rently.</div>
+                  <div class="check-tags"><span class="tag tag-rently">Rently</span><span class="tag tag-critical">Security</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p5-i3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Order professional photography</div>
+                  <div class="check-detail">Megan schedules the photographer once rent-ready is confirmed and Rently access is operational. No phone photos. Pro photos uploaded to Property Marketing folder.</div>
+                  <div class="check-tags"><span class="tag tag-time">Scheduled</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p5-i4">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Capture full marketing data set</div>
+                  <div class="check-detail">Pulled from Jotform + walkthrough: all appliances, flooring, fans, irrigation, septic/well/public, A/C type, garage, patio/screened room, community amenities, utilities included, pet policy with breed restrictions, lease term constraints (HOA 12-month minimums etc.).</div>
+                  <div class="check-tags"><span class="tag tag-docs">Full Data</span></div>
+                </div>
+                <span class="role-badge role-harvey">Harvey</span>
+              </li>
+              <li class="check-item" data-id="p5-i5">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Write marketing title and description</div>
+                  <div class="check-detail">Pamela writes the marketing copy — Lake Nona / neighborhood positioning, features that matter to qualified tenants, community amenities, HOA fee notes (e.g., $200 at signing and renewal for Laureate Park), Real Estate Agent co-broke schedule, breed restrictions in full, Resident Benefits Package. Pamela hands the finished copy to Harvey for the listing.</div>
+                  <div class="check-tags"><span class="tag tag-docs">Brand Voice</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p5-i6">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Verify AppFolio listing configuration</div>
+                  <div class="check-detail">Status set to vacant/ready for showing on date, market rent, application fee, security deposit, NSF fee, Use Market Rent on Ads = Yes. Cats allowed, dogs (large/small), pet deposit. All amenity tags populated.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-harvey">Harvey</span>
+              </li>
+              <li class="check-item" data-id="p5-i7">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">List in Rently (mode per Pamela's confirmation) and syndicate</div>
+                  <div class="check-detail">Harvey lists the property in Rently using the showing mode pre-confirmed by Pamela — Open Showings or Safe Mode. Posts to Verandah website, then syndicates to Zillow, Trulia, Apartments.com, MLS. Inserts Rently marketing link into AppFolio marketing paragraph. Verifies all feeds live within 24 hours.</div>
+                  <div class="check-tags"><span class="tag tag-rently">Rently</span><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-harvey">Harvey</span>
+              </li>
+              <li class="check-item" data-id="p5-i8">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Send owner full listing review with syndication list</div>
+                  <div class="check-detail">Once pro photos are live and all syndication feeds have propagated, Linda sends the owner the live listing link along with the full list of where the property is being marketed — Verandah website, MLS, Zillow, and all other sites AppFolio syndicates to. She asks the owner to review and share any feedback to ensure they're happy with how the property is being presented before the listing runs.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Owner Review</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+              <li class="check-item" data-id="p5-i9">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">File HOA info and tenant packet requirements</div>
+                  <div class="check-detail">HOA contact, approval process, admin fee amount, renewal fee, form requirements. Documented in AppFolio property notes for team reference during application processing.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="phase-section section-owner">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Owner Experience</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p5-o1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Previews professional photos</div>
+                  <div class="check-detail">Sees the asset presented at its best before listing goes public. Can flag anything concerning before launch.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p5-o2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Receives live listing link and full syndication list</div>
+                  <div class="check-detail">Linda delivers the live listing link along with the list of every site the property is being marketed on — Verandah website, MLS, Zillow, and every other platform AppFolio syndicates to. Complete visibility into how their property is being presented.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p5-o3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Reviews the listing and shares feedback</div>
+                  <div class="check-detail">Owner reviews the listing across platforms and lets Linda know if anything needs adjustment — copy, photos, positioning. Feedback loop closes before the listing runs at volume.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <!-- ================================================== -->
+    <!-- PHASE 6 — SHOWINGS, FEEDBACK, APPLICATIONS -->
+    <!-- ================================================== -->
+    <article class="phase" data-phase="6">
+      <header class="phase-header">
+        <div class="phase-num">06</div>
+        <div class="phase-title-block">
+          <h2>Showings · Feedback · Applications</h2>
+          <div class="phase-subtitle">Vacancy management — weekly cadence, market-based adjustments, qualified applicant to owner</div>
+        </div>
+        <div class="phase-meta">
+          <span class="phase-timing">14–45 Days</span>
+          <span class="phase-progress" data-count>0 of 0</span>
+        </div>
+        <div class="chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </header>
+      <div class="phase-body">
+        <div class="phase-content">
+
+          <div class="handoff-note">
+            <strong>Role split in this phase:</strong> Abril processes applications and makes the approval/denial decision based on Verandah's rental standards — the owner does not review or decide on individual applicants. Linda is the <em>communication bridge</em>: she receives updates from Abril on application status and relays them to the owner. The owner hears from Linda only, consistent with the white-glove single-point-of-contact experience.
+          </div>
+
+          <div class="decision-branches">
+            <div class="decision-branches-title">Decision Branches · HOA</div>
+            <ul>
+              <li><strong>HOA tenant packet required?</strong><span>If yes, packet + admin fee coordinated before lease execution (e.g., Laureate Park $200).</span></li>
+            </ul>
+          </div>
+
+          <div class="linda-cadence">
+            <div class="linda-cadence-label">Linda's Cadence</div>
+            <strong>Weekly Owner Updates are Linda's rhythm</strong> — she keeps the owner close through the vacancy with a standing cadence of calls and text/email updates (roughly 3-day, then 7-day intervals), adjusting to the owner's communication preferences. This is hand-held, not scheduled in a task list. Athenee can mirror the cadence as a ClickUp recurring task if helpful for visibility, but the relationship lives with Linda.
+          </div>
+
+          <div class="phase-section section-internal">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Internal Actions</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p6-i1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Weekly activity update to owner</div>
+                  <div class="check-detail">Every week: inquiries, showings (Rently self-showings + scheduled), feedback themes, days on market. Delivered by Linda. No radio silence.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Weekly</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+              <li class="check-item" data-id="p6-i2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Monitor market signals and flag price reviews</div>
+                  <div class="check-detail">If days-on-market, inquiry volume, or showing-to-app conversion lag comps, Linda opens the price conversation with the owner — with data. Before it's urgent.</div>
+                  <div class="check-tags"><span class="tag tag-time">Market-Based</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+              <li class="check-item" data-id="p6-i3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Process applications to Verandah standard</div>
+                  <div class="check-detail">Credit, income (3× rent gross), rental history, Florida eviction check, criminal background, employment verification. No shortcuts. Verandah Rental Selection Criteria applied consistently. Abril owns the decision on every application.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Screening</span></div>
+                </div>
+                <span class="role-badge role-abril">Abril</span>
+              </li>
+              <li class="check-item" data-id="p6-i4">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Notify Linda of incoming application and status</div>
+                  <div class="check-detail">Abril lets Linda know the moment an application comes in and keeps her updated throughout processing — in progress, additional info requested, approved, denied. Linda uses this to keep the owner informed.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Internal Handoff</span></div>
+                </div>
+                <span class="role-badge role-abril">Abril</span>
+              </li>
+              <li class="check-item" data-id="p6-i5">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Make approval or denial decision per Verandah standards</div>
+                  <div class="check-detail">Decision is Verandah's based on the rental selection criteria — not the owner's individual call. Abril documents the reasoning in AppFolio. Denials follow FCRA-compliant adverse action process.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Verandah Decision</span></div>
+                </div>
+                <span class="role-badge role-abril">Abril</span>
+              </li>
+              <li class="check-item" data-id="p6-i6">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Linda notifies owner of application outcome</div>
+                  <div class="check-detail">Once Abril has made the decision, Linda lets the owner know the outcome — approved or denied. Owner is informed, not asked to decide. Maintains single-point-of-contact experience.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Touchpoint</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+              <li class="check-item" data-id="p6-i7">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Confirm HOA tenant packet and admin fee handling</div>
+                  <div class="check-detail">If HOA requires new tenant packet (e.g., Laureate Park $200 admin fee), confirm process with HOA contact. Applicant informed of the fee before signing.</div>
+                  <div class="check-tags"><span class="tag tag-docs">HOA</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="phase-section section-owner">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Owner Experience</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p6-o1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Receives weekly updates from Linda</div>
+                  <div class="check-detail">Never wonders what's happening. Linda's update lands on the same day each week.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p6-o2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Makes price reduction decisions (if needed)</div>
+                  <div class="check-detail">Linda brings data, not pressure. Owner decides on pricing adjustments. Implemented same day if approved.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p6-o3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Informed of application received and under review</div>
+                  <div class="check-detail">Linda lets the owner know an application is in and being processed. No action required from owner.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p6-o4">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Informed of approval or denial outcome</div>
+                  <div class="check-detail">Linda relays the Verandah decision. Owner trusts the process — Verandah applies its standards consistently across the portfolio, which is why they hired us.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <!-- ================================================== -->
+    <!-- PHASE 7 — LEASE EXECUTION -->
+    <!-- ================================================== -->
+    <article class="phase" data-phase="7">
+      <header class="phase-header">
+        <div class="phase-num">07</div>
+        <div class="phase-title-block">
+          <h2>Lease Execution &amp; Owner Payment Setup</h2>
+          <div class="phase-subtitle">Lease signed, deposits cleared, owner financials finalized — onboarding complete</div>
+        </div>
+        <div class="phase-meta">
+          <span class="phase-timing">3–5 Days</span>
+          <span class="phase-progress" data-count>0 of 0</span>
+        </div>
+        <div class="chevron"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      </header>
+      <div class="phase-body">
+        <div class="phase-content">
+
+          <div class="handoff-note">
+            W-9/W-8 and ACH intentionally collected <strong>here</strong>, not at PMA signing. Spreads the paperwork out and ties the financial setup to the owner's first payout — they can't get paid until we have both.
+          </div>
+
+          <div class="phase-section section-internal">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Internal Actions</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p7-i1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Issue Florida-compliant lease for signing</div>
+                  <div class="check-detail">Lease generated from AppFolio template with all required addenda (pet if applicable, pool/spa, mold, lead-based paint if pre-1978). Electronic signature via AppFolio.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-abril">Abril</span>
+              </li>
+              <li class="check-item" data-id="p7-i2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Collect security deposit and first rent</div>
+                  <div class="check-detail">Both cleared before move-in per Florida §83.49. No exceptions. Deposits logged in AppFolio.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Funds Cleared</span></div>
+                </div>
+                <span class="role-badge role-abril">Abril</span>
+              </li>
+              <li class="check-item" data-id="p7-i3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Collect W-9 (or W-8) and ACH information from owner</div>
+                  <div class="check-detail">Intentionally deferred to this point. Abril sends the request via secure link. Owner cannot be paid until both are received and verified.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Required</span><span class="tag tag-docs">W-9 / W-8</span></div>
+                </div>
+                <span class="role-badge role-abril">Abril</span>
+              </li>
+              <li class="check-item" data-id="p7-i4">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Configure ACH disbursement in AppFolio</div>
+                  <div class="check-detail">Set up owner EFT with the routing/account info from the owner's signed form. Verify taxpayer name matches W-9 exactly. 1099 delivery preference recorded (electronic if consented).</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-pamela">Pamela</span>
+              </li>
+              <li class="check-item" data-id="p7-i5">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Execute HOA tenant packet submission</div>
+                  <div class="check-detail">Send required packet + copy of lease + admin fee per HOA process (e.g., Laureate Park: Ileen Santiago at Artemis Lifestyles). Confirm receipt.</div>
+                  <div class="check-tags"><span class="tag tag-docs">HOA</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p7-i6">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Schedule move-in inspection</div>
+                  <div class="check-detail">Book inspection with tenant for move-in day or prior. Photo/video documentation of every room. Tenant signs off. Filed to AppFolio — this protects the owner 12+ months out.</div>
+                  <div class="check-tags"><span class="tag tag-appfolio">AppFolio</span></div>
+                </div>
+                <span class="role-badge role-megan">Megan</span>
+              </li>
+              <li class="check-item" data-id="p7-i7">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Transition property to Owner Onboarded status</div>
+                  <div class="check-detail">All onboarding tasks closed. Property moves from onboarding pipeline to active portfolio — status flipped to "Owner Onboarded." ClickUp steady-state workflow (Athenee's build) picks up from here for ongoing communication and KPIs.</div>
+                  <div class="check-tags"><span class="tag tag-critical">Stage Transition</span></div>
+                </div>
+                <span class="role-badge role-linda">Linda</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="phase-section section-owner">
+            <div class="section-header">
+              <span class="section-dot"></span>
+              <span class="section-label">Owner Experience</span>
+              <span class="section-count" data-section-count>0 / 0</span>
+            </div>
+            <ul class="check-list">
+              <li class="check-item" data-id="p7-o1">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Receives lease execution confirmation</div>
+                  <div class="check-detail">Signed lease filed to owner portal. Move-in date, rent amount, deposit held — all confirmed in writing.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p7-o2">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Completes W-9/W-8 and ACH form</div>
+                  <div class="check-detail">Provides taxpayer details and voided check or bank letter. Owner understands: this unlocks their first disbursement.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p7-o3">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Receives move-in inspection report</div>
+                  <div class="check-detail">Full photo record of property condition on day one. The owner's protection for every deposit dispute downstream.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+              <li class="check-item" data-id="p7-o4">
+                <div class="checkbox"></div>
+                <div class="check-content">
+                  <div class="check-title">Onboarding complete — transitioned to steady state</div>
+                  <div class="check-detail">Owner knows exactly who handles what from here, how they'll be paid, and when to expect their first statement.</div>
+                </div>
+                <span class="role-badge role-owner">Owner</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </article>
+
+    <div class="milestone"><span class="milestone-mark">Milestone · Owner Onboarded · Handoff to ClickUp Steady-State</span></div>
+
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">Verandah Properties</div>
+      <div class="footer-meta">
+        Owner Onboarding Workflow · V6<br>
+        Pre-PMA → Owner Onboarded · Internal Process Document
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'verandah-onboarding-v2';
+
+  let state = {};
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) state = JSON.parse(saved);
+  } catch(e) { state = {}; }
+
+  const save = () => {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+  };
+
+  const items = document.querySelectorAll('.check-item');
+  items.forEach(item => {
+    const id = item.dataset.id;
+    if (state[id]) item.classList.add('checked');
+    item.addEventListener('click', () => {
+      item.classList.toggle('checked');
+      state[id] = item.classList.contains('checked');
+      save();
+      updateProgress();
+    });
+  });
+
+  function updateProgress() {
+    const visibleSelector = document.body.classList.contains('view-internal') ? '.section-internal .check-item' :
+                            document.body.classList.contains('view-owner') ? '.section-owner .check-item' :
+                            '.check-item';
+
+    const allItems = document.querySelectorAll(visibleSelector);
+    const doneItems = document.querySelectorAll(visibleSelector + '.checked');
+    const total = allItems.length;
+    const done = doneItems.length;
+    document.getElementById('done').textContent = done;
+    document.getElementById('total').textContent = total;
+    document.getElementById('fill').style.width = total > 0 ? (done/total*100) + '%' : '0%';
+
+    document.querySelectorAll('.phase').forEach(phase => {
+      const phaseItems = phase.querySelectorAll(visibleSelector);
+      const phaseDone = phase.querySelectorAll(visibleSelector + '.checked');
+      const countEl = phase.querySelector('[data-count]');
+      if (countEl) countEl.textContent = `${phaseDone.length} of ${phaseItems.length}`;
+
+      const allPhaseItems = phase.querySelectorAll('.check-item');
+      const allPhaseDone = phase.querySelectorAll('.check-item.checked');
+      if (allPhaseItems.length > 0 && allPhaseDone.length === allPhaseItems.length) {
+        phase.classList.add('complete');
+      } else {
+        phase.classList.remove('complete');
+      }
+
+      phase.querySelectorAll('.phase-section').forEach(section => {
+        const sectionItems = section.querySelectorAll('.check-item');
+        const sectionDone = section.querySelectorAll('.check-item.checked');
+        const sectionCountEl = section.querySelector('[data-section-count]');
+        if (sectionCountEl) sectionCountEl.textContent = `${sectionDone.length} / ${sectionItems.length}`;
+      });
+    });
+  }
+
+  document.querySelectorAll('.phase-header').forEach(header => {
+    header.addEventListener('click', () => {
+      header.parentElement.classList.toggle('open');
+    });
+  });
+
+  const viewButtons = document.querySelectorAll('.view-toggle button');
+  viewButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      viewButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const view = btn.dataset.view;
+      document.body.classList.remove('view-both', 'view-internal', 'view-owner');
+      document.body.classList.add('view-' + view);
+      updateProgress();
+    });
+  });
+
+  document.getElementById('reset').addEventListener('click', () => {
+    if (confirm('Reset all progress? This clears every checkbox.')) {
+      state = {};
+      save();
+      document.querySelectorAll('.check-item.checked').forEach(i => i.classList.remove('checked'));
+      updateProgress();
+    }
+  });
+
+  updateProgress();
+</script>
+
+</body>
+</html>
